@@ -7,6 +7,8 @@ import java.util.List;
 public class HotelDataAccess {
     private static Connection conn;
     private static final String crdatabase = "hotel";
+    private static final String roomdatabase = "room";
+
     public HotelDataAccess()
             throws SQLException, ClassNotFoundException {
 
@@ -43,6 +45,32 @@ public class HotelDataAccess {
             String hotelPhone = rs.getString("hotelPhone");
             String hotelEmail = rs.getString("hotelEmail");
             list.add(new Hotel(i, hotelName, hotelAdress, hotelPhone, hotelEmail));
+        }
+
+        pstmnt.close(); // also closes related result set
+        return list;
+    }
+
+    /**
+     * Get all db records
+     * @return
+     * @throws SQLException
+     */
+    public List<Room> getAllRoom(int hotelID) throws SQLException {
+
+        String sql = "SELECT * FROM room  WHERE room.fk_hotelID = " + hotelID;
+        PreparedStatement pstmnt = conn.prepareStatement(sql);
+        ResultSet rs = pstmnt.executeQuery();
+        List<Room> list = new ArrayList<>();
+
+        while  (rs.next()) {
+            int i = rs.getInt("roomID" );
+            String roomName = rs.getString("roomName");
+            String roomCapacity = rs.getString("roomCapacity");
+            String roomSize = rs.getString("roomSize");
+            int fk_categoryID = rs.getInt("fk_categoryID");
+            int fk_hotelID = rs.getInt("fk_hotelID");
+            list.add(new Room(i, roomName, roomCapacity, roomSize, fk_categoryID, fk_hotelID));
         }
 
         pstmnt.close(); // also closes related result set

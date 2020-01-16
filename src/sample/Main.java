@@ -34,6 +34,14 @@ public class Main extends Application {
     private Label hotelPhone;
     private Label hotelEmail;
 
+    //Room
+    private ListView<Room> roomlistView;
+    private ObservableList<Room> dataRoom;
+    private Label roomID;
+    private Label roomName;
+    private Label roomeCapacity;
+    private Label roomSize;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         hotellistView = new  ListView<>();
@@ -97,7 +105,9 @@ public class Main extends Application {
         newDategrid.add(startlbl, 1, 0);
         newDategrid.add(end, 0, 1);
         newDategrid.add(endlbl, 1, 1);
-        VBox vb1 = new VBox(25, hbHotel, newDategrid);
+        roomlistView = new  ListView<>();
+
+        VBox vb1 = new VBox(25, hbHotel, newDategrid, roomlistView);
 
 
 
@@ -156,6 +166,11 @@ public class Main extends Application {
             hotelAdress.setText(Hotel.getHotelAdress());
             hotelPhone.setText(Hotel.getHotelPhone());
             hotelEmail.setText(Hotel.getHotelEmail());
+            dataRoom =  getDbRoom(Hotel.getHotelID());
+            roomlistView.setItems(dataRoom);
+
+
+
         }
     }
     private ObservableList<Hotel> getDbData() {
@@ -172,6 +187,21 @@ public class Main extends Application {
 
         ObservableList<Hotel> dbData = FXCollections.observableList(list);
         return  dbData;
+    }
+    private ObservableList<Room> getDbRoom(int i) {
+
+        List<Room> list = null ;
+
+        try  {
+            list = dbaccess.getAllRoom(i);
+        }
+        catch  (Exception e) {
+
+            displayException(e);
+        }
+
+        ObservableList<Room> dataRoom = FXCollections.observableList(list);
+        return  dataRoom;
     }
     private   void  displayException(Exception e) {
 
