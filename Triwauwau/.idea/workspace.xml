@@ -2,14 +2,37 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/logo.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/password.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/user.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/Employee.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/Login.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/Login.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/sample/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/lib.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/mysql_connector_java_8_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/HotelDataAccess.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/HotelDataAccess.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Triwauwau.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Triwauwau.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/Category.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/Category.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/Controller.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/Controller.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/Hotel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/Hotel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/HotelDataAccess.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/HotelDataAccess.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/Main$ListSelectChangeListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/Main$ListSelectChangeListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/Room.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/Room.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Triwauwau/sample/RoomCategory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Triwauwau/sample/RoomCategory.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Main.java" afterDir="false" />
     </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -58,6 +81,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="FxmlFile" />
         <option value="Class" />
       </list>
     </option>
@@ -71,8 +95,13 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
   <component name="ProjectId" id="1WQWO8QapxoDux6wvY9EeXcqheJ" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectReloadState">
     <option name="STATE" value="0" />
   </component>
@@ -82,6 +111,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="GoToFile.includeJavaFiles" value="false" />
@@ -91,28 +121,27 @@
     <property name="OverrideImplement.combined" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="dynamic.classpath" value="false" />
-    <property name="last_opened_file_path" value="$USER_HOME$/mysql-connector-java-8.0.18" />
-    <property name="project.structure.last.edited" value="Libraries" />
-    <property name="project.structure.proportion" value="0.0" />
-    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="last_opened_file_path" value="D:/JAVA/mysql-connector-java-8.0.18/mysql-connector-java-8.0.18.jar!/" />
+    <property name="project.structure.last.edited" value="Global Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="recentsLimit" value="5" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="preferences.JavaFX" />
   </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
   <component name="RunManager">
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
       <option name="VMOptions" />
       <option name="arguments" />
@@ -125,10 +154,16 @@
       <Host>localhost</Host>
       <Port>5050</Port>
     </configuration>
+    <configuration default="true" type="Applet">
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="sample.Main" />
       <module name="Triwauwau" />
-      <option name="VM_PARAMETERS" value="--module-path C:\Users\vinzi\javafx-sdk-11.0.2\lib --add-modules=javafx.controls,javafx.fxml  " />
+      <option name="VM_PARAMETERS" value="--module-path D:\JAVA\javafx-sdk-11.0.2\lib --add-modules=javafx.controls,javafx.fxml  " />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="sample.*" />
@@ -179,18 +214,6 @@
       </method>
     </configuration>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -208,8 +231,22 @@
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="1302000" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="INCLUDE_TEXT_INTO_SHELF" value="false" />
   </component>
   <component name="WindowStateProjectService">

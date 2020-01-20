@@ -30,7 +30,7 @@ public class Main extends Application {
 
     private ObservableList<Hotel> datahotel;
     private Label hotelID;
-    private  Label hotelName;
+    private Label hotelName;
     private Label hotelAdress;
     private Label hotelPhone;
     private Label hotelEmail;
