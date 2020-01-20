@@ -1,24 +1,24 @@
 package sample;
 
 public class Booking {
+
     private int bookingID;
-    private String firstName;
-    private String surName;
-    private String email;
-    private String phone;
-    private String payment;
-    private boolean humaneCage;
+    private int fk_userID;
+    private int fk_roomID;
+    private int fk_dateID;
+    private int fk_hotelID;
+    private boolean humangeCage;
     private boolean breakfast;
     private boolean wellness;
-    private double priceSum;
-    public Booking(int bookingID, String firstName, String surName, String email, String phone, String payment, boolean humaneCage, boolean breakfast, boolean wellness, double priceSum){
+    private int priceSum;
+    public Booking(int bookingID, int fk_userID, int fk_roomID, int fk_dateID, int fk_hotelID, boolean humangeCage,
+                   boolean breakfast, boolean wellness, int priceSum){
         this.bookingID = bookingID;
-        this.firstName = firstName;
-        this.surName = surName;
-        this.email = email;
-        this.phone = phone;
-        this.payment = payment;
-        this.humaneCage = humaneCage;
+        this.fk_userID = fk_userID;
+        this.fk_roomID = fk_roomID;
+        this.fk_dateID = fk_dateID;
+        this.fk_hotelID = fk_hotelID;
+        this.humangeCage = humangeCage;
         this.breakfast = breakfast;
         this.wellness = wellness;
         this.priceSum = priceSum;
@@ -32,52 +32,44 @@ public class Booking {
         this.bookingID = bookingID;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public int getFk_userID() {
+        return fk_userID;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFk_userID(int fk_userID) {
+        this.fk_userID = fk_userID;
     }
 
-    public String getSurName() {
-        return surName;
+    public int getFk_roomID() {
+        return fk_roomID;
     }
 
-    public void setSurName(String surName) {
-        this.surName = surName;
+    public void setFk_roomID(int fk_roomID) {
+        this.fk_roomID = fk_roomID;
     }
 
-    public String getEmail() {
-        return email;
+    public int getFk_dateID() {
+        return fk_dateID;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setFk_dateID(int fk_dateID) {
+        this.fk_dateID = fk_dateID;
     }
 
-    public String getPhone() {
-        return phone;
+    public int getFk_hotelID() {
+        return fk_hotelID;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setFk_hotelID(int fk_hotelID) {
+        this.fk_hotelID = fk_hotelID;
     }
 
-    public String getPayment() {
-        return payment;
+    public boolean isHumangeCage() {
+        return humangeCage;
     }
 
-    public void setPayment(String payment) {
-        this.payment = payment;
-    }
-
-    public boolean isHumaneCage() {
-        return humaneCage;
-    }
-
-    public void setHumaneCage(boolean humaneCage) {
-        this.humaneCage = humaneCage;
+    public void setHumangeCage(boolean humangeCage) {
+        this.humangeCage = humangeCage;
     }
 
     public boolean isBreakfast() {
@@ -96,11 +88,11 @@ public class Booking {
         this.wellness = wellness;
     }
 
-    public double getPriceSum() {
+    public int getPriceSum() {
         return priceSum;
     }
 
-    public void setPriceSum(double priceSum) {
+    public void setPriceSum(int priceSum) {
         this.priceSum = priceSum;
     }
 }
