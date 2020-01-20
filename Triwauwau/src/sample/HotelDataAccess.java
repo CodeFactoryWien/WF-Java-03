@@ -89,7 +89,7 @@ public class HotelDataAccess {
         String sql = "SELECT room.roomID, room.roomName, category.categoryName, category.categorySize, category.categoryPrice\n" +
                 "FROM room \n" +
                 "\tINNER JOIN category ON room.fk_categoryID = category.categoryID \n" +
-                "\tINNER JOIN hotel ON room.fk_hotelID = "+ hotelID;
+                "\tINNER JOIN hotel ON room.fk_hotelID = hotel.hotelID WHERE hotel.hotelID ="+ hotelID;
         PreparedStatement psmnt = conn.prepareStatement(sql);
         ResultSet rs = psmnt.executeQuery();
         List<RoomCategory> list = new ArrayList<>();

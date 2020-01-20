@@ -141,7 +141,7 @@ public class Main extends Application {
         VBox vb1 = new VBox(25, hbHotel, newDategrid, roomTable);
         //   Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("TriWauWau");
-        primaryStage.setScene(new Scene(vb1, 600, 600));
+        primaryStage.setScene(new Scene(vb1, 700, 600));
         primaryStage.show();
 
         hotellistView.getSelectionModel().selectFirst();
