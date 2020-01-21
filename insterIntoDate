@@ -1,0 +1,9 @@
+public void insertIntoDate() throws SQLException{
+        String sql = "INSERT INTO Date (startDate, endDate, fk_roomID)" + "values (?,?,?,?)";
+        PreparedStatement pstmnt = conn.prepareStatement(sql);
+        pstmnt.setDate(1, startDateTxt.getText());
+        pstmnt.setDate(2, endDateTxt.getText();
+        pstmnt.setInt(3, fk_roomIDTxt.getText());
+
+        pstmnt.executeUpdate();
+    }
