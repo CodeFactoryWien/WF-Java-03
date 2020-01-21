@@ -1,0 +1,13 @@
+public void insertIntoUser() throws SQLException {
+
+        String sql = "INSERT INTO user (userID, firstName, lastName, phone, email, payment )" + " values (?,?,?,?,?,?)";
+        PreparedStatement pstmnt = conn.prepareStatement(sql);
+        pstmnt.setString(2, firstNameTxt.getText());
+        pstmnt.setString(3, lastNameTxt.getText());
+        pstmnt.setString(4, phoneTxt.getText());
+        pstmnt.setString(5, paymentTxt.getText());
+        pstmnt.setString(6, emailTxt.getText());
+
+        pstmnt.executeUpdate();
+        conn.close();
+    }
