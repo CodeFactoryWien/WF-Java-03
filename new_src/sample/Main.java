@@ -21,6 +21,7 @@
 
                 import java.sql.*;
                 import java.time.ZoneId;
+                import java.util.ArrayList;
                 import java.util.Calendar;
                 import java.util.Date;
                 import java.util.List;
@@ -50,22 +51,44 @@
             private ObservableList<BookingDate> dataBookingDate;
 
             //PRICE SUM METHOD
-            public static double daycounter(Date startDate, Date endDate) {
-                double diff = (endDate.getTime() - startDate.getTime());
-                return diff /(1000*60*60*24);
+            public static double pricecalc(LocalDate startDate, LocalDate endDate,boolean cage,boolean breakfast, boolean wellness,double categoryPrice) {
+                Date date1 = Date.from(startDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                Date date2 = Date.from(endDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                double diff = (date2.getTime() - date1.getTime())/(1000*60*60*24);
+                double result;
+                if (cage&&breakfast==false&&wellness==false)
+                    result = diff*(categoryPrice+15);
+                else if (breakfast&&cage==false&&wellness==false)
+                    result = diff*(categoryPrice+10);
+                else if (wellness&&cage==false&&breakfast==false)
+                    result = diff*(categoryPrice+35);
+                else if (cage&&breakfast&&wellness==false)
+                    result = diff*(categoryPrice+25);
+                else if (cage&&breakfast&&wellness)
+                    result = diff*(categoryPrice+60);
+                else if (cage&&wellness&&breakfast==false)
+                    result = diff*(categoryPrice+50);
+                else if (wellness&&breakfast&&cage==false)
+                    result = diff*(categoryPrice+45);
+                else
+                    result = diff*categoryPrice;
+                return result;
             };
+
+
 
             @Override
             public void start(Stage primaryStage) throws Exception{
+
                 hotellistView = new  ListView<>();
+
                 hotellistView.getSelectionModel().selectedIndexProperty().addListener(
                 new  ListSelectChangeListener());
+
                 datahotel = getDbData();
                 hotellistView.setItems(datahotel);
 
                 bookingDateTable = new TableView<>();
-                bookingDateTable.getSelectionModel().selectedIndexProperty().addListener(
-                new  ListSelectChangeListener());
 
                 // HOTELLAYOUT
                 Label hotellbl = new Label("Hotel");
@@ -131,6 +154,7 @@
 
 
                 roomTable.getColumns().addAll(roomIDColumn,roomNameColumn,roomSizeColumn,roomPriceColumn,roomCategoryColumn);
+                roomTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
                 //BOOKING TABLEVIEW
                 bookingDateTable.setEditable(true);
@@ -170,10 +194,11 @@
                 endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
 
 
-                TableColumn<BookingDate, Long> priceSumColumn = new TableColumn<>("priceSum");
+                TableColumn<BookingDate, Long> priceSumColumn = new TableColumn<>("Total Price €");
                 priceSumColumn.setCellValueFactory(new PropertyValueFactory<>("priceSum"));
 
                 bookingDateTable.getColumns().addAll(bookingIDColumn,firstNameColumn,lastNameColumn,phoneColumn,emailColumn,paymentColumn,humanCageColumn,breakfastColumn,wellnessColumn,startDateColumn,endDateColumn,priceSumColumn);
+                bookingDateTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
                 //INSERT FIELDS
 
@@ -181,6 +206,7 @@
                 Label firstNamelbl = new Label("Firstname");
                 TextField lastNameTxt = new TextField();
                 Label lastNamelbl = new Label("Lastname");
+
                 TextField phoneTxt = new TextField();
                 Label phonelbl = new Label("Phone");
                 TextField emailTxt = new TextField();
@@ -203,36 +229,62 @@
                 newDategrid.add(endDateTxt, 0, 1);
                 newDategrid.add(endlbl, 1, 1);
 
+                //BUTTONS
+                Button bookingbtn = new Button("New Booking");
+                Button deletebookingbtn = new Button("Delete");
+                Button updatebookingbtn = new Button("Update");
 
-                /*TablePosition pos = roomTable.getSelectionModel().getSelectedCells().get(0);
-                int row = pos.getRow();
+                //RADIOBUTTONS
+                RadioButton cagebtn = new RadioButton("Humancage");
+                RadioButton breakfastbtn = new RadioButton("Breakfast");
+                RadioButton wellnessbtn = new RadioButton("Wellness");
 
-                // Item here is the table view type:
-                RoomCategory item = roomTable.getItems().get(row);
 
-                TableColumn col = pos.getTableColumn();
 
-                // this gives the value in the selected cell:
-                int data = (int) col.getCellObservableValue(item).getValue();
 
-                String buff = roomTable.getSelectionModel().getSelectedItem().toString();*/
-                Button test = new Button("Test");
 
-                test.setOnAction(e-> {
+                //INSERT BOOKING BUTTON METHOD
+                bookingbtn.setOnAction(e-> {
                     try {
                         User u = new User(0, firstNameTxt.getText(),lastNameTxt.getText(),phoneTxt.getText(),paymentTxt.getText(),emailTxt.getText());
-                 //       HotelDataAccess.insertIntoUser(firstNameTxt.getText(),lastNameTxt.getText(),phoneTxt.getText(),paymentTxt.getText(),emailTxt.getText());
-                        HotelDataAccess.insertIntoUser(u);
-                        HotelDataAccess.insertIntoDate(startDateTxt.getValue(), endDateTxt.getValue(), roomTable.getSelectionModel().getSelectedItem().getRoomID());
+                        RoomDate rd = new RoomDate(0, startDateTxt.getValue().plusDays(1), endDateTxt.getValue().plusDays(1), roomTable.getSelectionModel().getSelectedItem().getRoomID());
 
-
-                      //HotelDataAccess.insertBooking(, , false, false,true, );
+                        Booking b1 = new Booking(0, HotelDataAccess.insertUser(u), HotelDataAccess.insertIntoDate(rd), cagebtn.isSelected(),breakfastbtn.isSelected(),wellnessbtn.isSelected(),pricecalc(startDateTxt.getValue(),endDateTxt.getValue(),cagebtn.isSelected(),breakfastbtn.isSelected(),wellnessbtn.isSelected(),roomTable.getSelectionModel().getSelectedItem().getCategoryPrice()) );
+                        HotelDataAccess.insertBooking(b1);
+                        firstNameTxt.clear();lastNameTxt.clear();phoneTxt.clear();paymentTxt.clear();emailTxt.clear();cagebtn.setSelected(false);breakfastbtn.setSelected(false);wellnessbtn.setSelected(false);startDateTxt.setValue(null);endDateTxt.setValue(null);
+                        dataBookingDate.clear();
+                        dataBookingDate = getDbBookingDate(roomTable.getSelectionModel().getSelectedItem().getRoomID());
+                        bookingDateTable.setItems(dataBookingDate);
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                 });
 
-                VBox insertbox = new VBox(firstNamelbl,firstNameTxt,lastNamelbl,lastNameTxt,phonelbl,phoneTxt,paymentlbl,paymentTxt,emiallbl,emailTxt,newDategrid,test);
+                //DELETE BOOKING BUTTON MeTHOD
+                deletebookingbtn.setOnAction(e-> {
+                    try {
+                        HotelDataAccess.deleteBooking(bookingDateTable.getSelectionModel().getSelectedItem().getBookingID());
+                        dataBookingDate.clear();
+                        dataBookingDate =getDbBookingDate(roomTable.getSelectionModel().getSelectedItem().getRoomID());
+                        bookingDateTable.setItems(dataBookingDate);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+
+                //UPDATE BOOKING BUTTON METHOD
+                updatebookingbtn.setOnAction(e-> {
+                    try {
+                        //RoomDate rd = new RoomDate(0, startDateTxt.getValue(), endDateTxt.getValue(), roomTable.getSelectionModel().getSelectedItem().getRoomID());
+
+                        Booking booking = new Booking(bookingDateTable.getSelectionModel().getSelectedItem().getBookingID(),0,0,false,false,false,2);
+                        HotelDataAccess.updateBooking(booking);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+
+                VBox insertbox = new VBox(firstNamelbl,firstNameTxt,lastNamelbl,lastNameTxt,phonelbl,phoneTxt,paymentlbl,paymentTxt,emiallbl,emailTxt,newDategrid,cagebtn,breakfastbtn,wellnessbtn,bookingbtn,deletebookingbtn,updatebookingbtn);
                 HBox hbHotel = new HBox(25, hotellistView, grid1,insertbox);
 
                 VBox vb1 = new VBox(25, hbHotel, roomTable, bookingDateTable);
@@ -299,8 +351,7 @@
             dataRoomCategory = getDbRoomCategory(hotel.getHotelID());
             roomTable.setItems(dataRoomCategory);
             roomTable.getSelectionModel().selectedIndexProperty().addListener(
-            new ListSelectChangeListener1());
-            roomTable.getSelectionModel().selectFirst();
+                    new ListSelectChangeListener1());
 
 
         }
@@ -317,58 +368,33 @@
             }
 
 
+            //roomTable.getSelectionModel().selectFirst();
             RoomCategory roomCategory = dataRoomCategory.get(new_val.intValue());
             dataBookingDate = getDbBookingDate(roomCategory.getRoomID());
             bookingDateTable.setItems(dataBookingDate);
+
             //Double roomCategoryPrice = roomCategory.getCategoryPrice();
         }
     }
-            private   class  ListSelectChangeListener2 implements ChangeListener<Number> {
-
-                @Override
-                public   void  changed(ObservableValue<? extends Number> ov,
-                                       Number old_val, Number new_val) {
-
-                    if ((new_val.intValue() < 0) || (new_val.intValue() >= dataBookingDate.size())) {
-
-                        return;
-                    }
 
 
+    private   class  ListSelectChangeListener2 implements ChangeListener<Number> {
 
-                }
+        @Override
+        public   void  changed(ObservableValue<? extends Number> ov,
+                               Number old_val, Number new_val) {
+
+            if ((new_val.intValue() < 0) || (new_val.intValue() >= dataBookingDate.size())) {
+
+                return;
             }
-    private ObservableList<BookingDate> getDbBookingDate(int roomID) {
 
-        List<BookingDate> list = null ;
 
-        try  {
-            list = dbaccess.getBookingDate(roomID);
+
         }
-        catch  (Exception e) {
-
-            displayException(e);
-        }
-
-        ObservableList<BookingDate> dataBookingDate = FXCollections.observableList(list);
-        return  dataBookingDate;
     }
 
-    private ObservableList<RoomCategory> getDbRoomCategory(int i) {
 
-        List<RoomCategory> list = null ;
-
-        try  {
-            list = dbaccess.getRoomCategory(i);
-        }
-        catch  (Exception e) {
-
-            displayException(e);
-        }
-
-        ObservableList<RoomCategory> dataRoomCategory = FXCollections.observableList(list);
-        return  dataRoomCategory;
-    }
     private ObservableList<Hotel> getDbData() {
 
         List<Hotel> list = null ;
@@ -383,6 +409,39 @@
 
         ObservableList<Hotel> dbData = FXCollections.observableList(list);
         return  dbData;
+    }
+
+    private ObservableList<RoomCategory> getDbRoomCategory(int i) {
+
+        List<RoomCategory> list = null ;
+
+        try  {
+            list = dbaccess.getRoomCategory(i);
+        }
+        catch  (Exception e) {
+
+            displayException(e);
+        }
+
+    ObservableList<RoomCategory> dataRoomCategory = FXCollections.observableList(list);
+    return  dataRoomCategory;
+    }
+
+    private ObservableList<BookingDate> getDbBookingDate(int roomID) {
+
+        List<BookingDate> list = null ;
+
+
+        try  {
+            list = dbaccess.getBookingDate(roomID);
+        }
+        catch  (Exception e) {
+
+            displayException(e);
+        }
+
+        ObservableList<BookingDate> dataBookingDate = FXCollections.observableList(list);
+        return  dataBookingDate;
     }
 
     private ObservableList<Room> getDbRoom(int i) {

@@ -8,9 +8,9 @@ public class Booking {
     private boolean humanCage;
     private boolean breakfast;
     private boolean wellness;
-    private int priceSum;
+    private double priceSum;
     public Booking(int bookingID, int fk_userID, int fk_dateID,  boolean humanCage,
-                   boolean breakfast, boolean wellness, int priceSum){
+                   boolean breakfast, boolean wellness, double priceSum){
         this.bookingID = bookingID;
         this.fk_userID = fk_userID;
         this.fk_dateID = fk_dateID;
@@ -69,7 +69,7 @@ public class Booking {
         this.wellness = wellness;
     }
 
-    public int getPriceSum() {
+    public double getPriceSum() {
         return priceSum;
     }
 

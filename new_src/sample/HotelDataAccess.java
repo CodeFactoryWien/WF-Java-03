@@ -11,6 +11,10 @@ import java.util.Date;
 public class HotelDataAccess {
     private static Connection conn;
     private static final String crdatabase = "hotel";
+    private static final String roomdatabase = "room";
+    private static final String userdatabase = "user";
+    private static final String  datedatabase = "date";
+    private static final String bookingdatabase = "booking";
 
     public HotelDataAccess()
             throws SQLException, ClassNotFoundException {
@@ -22,6 +26,10 @@ public class HotelDataAccess {
                         "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC" ,
                 "root",
                 "");
+
+        // we will use this connection to write to a file
+        conn.setAutoCommit(true);
+        conn.setReadOnly( false);
     }
     public void closeDb() throws SQLException {
         conn.close();
@@ -49,7 +57,7 @@ public class HotelDataAccess {
 
     public List<Room> getAllRoom(int hotelID) throws SQLException {
 
-        String sql = "SELECT * FROM room  WHERE room.fk_hotelID = " + hotelID;
+        String sql = "SELECT * FROM " + roomdatabase +"  WHERE room.fk_hotelID = " + hotelID;
         PreparedStatement pstmnt = conn.prepareStatement(sql);
         ResultSet rs = pstmnt.executeQuery();
         List<Room> list = new ArrayList<>();
@@ -139,59 +147,182 @@ public class HotelDataAccess {
         return list;
 
     }
-    //String firstName, String lastName, String phone, String payment, String email
-    public static void insertIntoUser(User u) throws SQLException {
+    //Insert Methodes first with some Explanation
+    public static int  insertUser(User user)
+            throws  SQLException {
+        //get the Datebasename form the final Int above and insert the User we get from the TextFields form the FX (7 Parameters First is ID, + 6 we get from Main)
+        String dml = "INSERT INTO "  + userdatabase + " VALUES (DEFAULT, ?, ?, ?, ?, ?)" ;
+        //Prepare a Statement with a A.I (auto ID) as a Default and than return it
+        PreparedStatement pstmnt = conn.prepareStatement(dml,
+                PreparedStatement.RETURN_GENERATED_KEYS);
+        pstmnt.setString( 1 , user.getFirstName());
+        pstmnt.setString( 2 , user.getLastName());
+        pstmnt.setString(3, user.getPhone());
+        pstmnt.setString(4, user.getEmail());
+        pstmnt.setString(5, user.getPayment());
+        //Do th Update on the Database, insert it
+        pstmnt.executeUpdate(); // returns insert count
 
-        String sql = "INSERT INTO user (userID, firstName, lastName, phone, email, payment )" + " values (?,?,?,?,?,?)";
-        PreparedStatement pstmnt = conn.prepareStatement(sql);
-        pstmnt.setInt(1, u.getUserID());
-
-        pstmnt.setString(2, u.getFirstName());
-        pstmnt.setString(3, u.getLastName());
-        pstmnt.setString(4, u.getPhone());
-        pstmnt.setString(5, u.getEmail());
-        pstmnt.setString(6, u.getPayment());
-
-        pstmnt.executeUpdate();
+        // get identity column value
+        //Our Result Set gives us back the new ID - it is awesome because we need it
+        ResultSet rs = pstmnt.getGeneratedKeys();
+        rs.next();
+        //we get the ID form our First Column hurray
+        int  id = rs.getInt( 1 );
+        //We close the Statement so everything is running fast
         pstmnt.close();
-
+        //We return our ID because we need it for another method in the Main
+        return  id;
     }
-    public static void insertIntoDate(LocalDate startDate, LocalDate endDate, int i) throws SQLException{
-        String sql = "INSERT INTO date (startDate, endDate, fk_roomID)" + "values (?,?,?)";
-        PreparedStatement pstmnt = conn.prepareStatement(sql);
-        LocalDateTime dt = LocalDateTime.of(startDate.getYear(),
-                startDate.getMonth(),
-                startDate.getDayOfMonth(), 0,0,0,0);
+
+
+    public static int  insertIntoDate(RoomDate roomdate) throws SQLException{
+        String dml = "INSERT INTO "  + datedatabase + " VALUES (DEFAULT, ?, ?, ?)" ;
+        PreparedStatement pstmnt = conn.prepareStatement(dml,
+                PreparedStatement.RETURN_GENERATED_KEYS);
+        LocalDateTime dt =  LocalDateTime.of(roomdate.getStartDate().getYear(),
+                roomdate.getStartDate().getMonthValue(),
+                roomdate.getStartDate().getDayOfMonth(),
+                0,0,0,0);
         java.sql.Date date = new java.sql.Date(
                 dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         pstmnt.setDate(1, (date));
-        LocalDateTime dt1 = LocalDateTime.of(endDate.getYear(),
-                endDate.getMonth(),
-                endDate.getDayOfMonth(), 0,0,0,0);
+        LocalDateTime dt1 = LocalDateTime.of(roomdate.getEndDate().getYear(),
+                roomdate.getEndDate().getMonthValue(),
+                roomdate.getEndDate().getDayOfMonth(),
+                0,0,0,0);
         java.sql.Date date1 = new java.sql.Date(
                 dt1.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         pstmnt.setDate(2, (date1));
-        pstmnt.setInt(3, i);
+        pstmnt.setInt(3, roomdate.getFk_roomID());
 
-        pstmnt.executeUpdate();
+        pstmnt.executeUpdate(); // returns insert count
+
+        // get identity column value
+        ResultSet rs = pstmnt.getGeneratedKeys();
+        rs.next();
+        int  id = rs.getInt( 1 );
+
+        pstmnt.close();
+        return  id;
+    }
+
+    public static int  updateDate(RoomDate roomdate) throws SQLException{
+        String dml = "UPDATE  "  + datedatabase + " SET startDate = ?, endDate = ? WHERE fk_roomID = ?" ;
+        PreparedStatement pstmnt = conn.prepareStatement(dml,
+                PreparedStatement.RETURN_GENERATED_KEYS);
+        LocalDateTime dt =  LocalDateTime.of(roomdate.getStartDate().getYear(),
+                roomdate.getStartDate().getMonthValue(),
+                roomdate.getStartDate().getDayOfMonth(),
+                0,0,0,0);
+        java.sql.Date date = new java.sql.Date(
+                dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        pstmnt.setDate(1, (date));
+        LocalDateTime dt1 = LocalDateTime.of(roomdate.getEndDate().getYear(),
+                roomdate.getEndDate().getMonthValue(),
+                roomdate.getEndDate().getDayOfMonth(),
+                0,0,0,0);
+        java.sql.Date date1 = new java.sql.Date(
+                dt1.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        pstmnt.setDate(2, (date1));
+        pstmnt.setInt(3, roomdate.getFk_roomID());
+
+        pstmnt.executeUpdate(); // returns insert count
+
+        // get identity column value
+        ResultSet rs = pstmnt.getGeneratedKeys();
+        rs.next();
+        int  id = rs.getInt( 1 );
+
+        pstmnt.close();
+        return  id;
+    }
+
+    public static int insertBooking(Booking booking) throws SQLException{
+        String dml = "INSERT INTO "  + bookingdatabase + " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)" ;
+        PreparedStatement pstmnt = conn.prepareStatement(dml,
+                PreparedStatement.RETURN_GENERATED_KEYS);
+        pstmnt.setInt(1,booking.getFk_userID());
+        pstmnt.setInt(2, booking.getFk_dateID());
+        pstmnt.setBoolean(3, booking.isHumanCage());
+        pstmnt.setBoolean(4, booking.isBreakfast());
+        pstmnt.setBoolean(5, booking.isWellness());
+        pstmnt.setDouble(6, booking.getPriceSum());
+        pstmnt.executeUpdate(); // returns insert count
+
+        // get identity column value
+        ResultSet rs = pstmnt.getGeneratedKeys();
+        rs.next();
+        int  id = rs.getInt( 1 );
+
+        pstmnt.close();
+        return  id;
+
+    }
+
+    // Update Meth following here
+    public void  updateUser (User user) throws  SQLException {
+
+        String dml = "UPDATE "  + userdatabase +
+                " SET name = ?"  + " WHERE id = ?" ;
+        PreparedStatement pstmnt = conn.prepareStatement(dml);
+        pstmnt.setString( 1 , user.getFirstName());
+        pstmnt.setString( 2 , user.getLastName());
+        pstmnt.setString(3, user.getPhone());
+        pstmnt.setString(4, user.getEmail());
+        pstmnt.setString(5, user.getPayment());
+        pstmnt.executeUpdate(); // returns update count
         pstmnt.close();
     }
 
-    public static void insertBooking(int userID, int dateID, boolean cage, boolean breakfast, boolean well,double priceSum) throws SQLException{
-        String sql = "INSERT INTO booking (fk_userID, fk_dateID, humanCage, breakfast, wellness,priceSum)" + "values (?,?,?,?,?,?)";
+    public static void  updateBooking (Booking booking) throws  SQLException {
+
+        String dml = "UPDATE "  + bookingdatabase +
+                " SET humanCage = ? , breakfast = ?, wellness =?, priceSum = ? WHERE bookingID = "+booking.getBookingID() ;
+        PreparedStatement pstmnt = conn.prepareStatement(dml);
+        pstmnt.setBoolean(1,booking.isHumanCage());
+        pstmnt.setBoolean(2, booking.isBreakfast());
+        pstmnt.setBoolean(3, booking.isWellness());
+        pstmnt.setDouble(4, booking.getPriceSum());
+        pstmnt.executeUpdate(); // returns update count
+        pstmnt.close();
+    }
+
+    // Delete Meth following here
+
+    public static void  deleteBooking(int bookingID)
+            throws  SQLException {
+
+        String dml = "DELETE FROM "  + bookingdatabase + " WHERE bookingID = ?" ;
+        PreparedStatement pstmnt = conn.prepareStatement(dml);
+        pstmnt.setInt( 1 , bookingID);
+        pstmnt.executeUpdate(); // returns delete count (0 for none)
+
+        pstmnt.close();
+    }
+
+    //Chck if some Id is the same as the ID I need
+
+    public  boolean userExist(User user) throws SQLException {
+
+        String sql = "SELECT COUNT(id) FROM " + userdatabase + " WHERE id <> ?" ;
         PreparedStatement pstmnt = conn.prepareStatement(sql);
-
-        pstmnt.setInt(1,userID);
-        pstmnt.setInt(2,dateID);
-        pstmnt.setBoolean(3,cage);
-        pstmnt.setBoolean(4,breakfast);
-        pstmnt.setBoolean(5,well);
-        pstmnt.setDouble(6,priceSum);
-
-
-        pstmnt.executeUpdate();
+        pstmnt.setString( 1 , user.getFirstName());
+        pstmnt.setString( 2 , user.getLastName());
+        pstmnt.setString(3, user.getPhone());
+        pstmnt.setString(4, user.getEmail());
+        pstmnt.setString(5, user.getPayment());
+        ResultSet rs = pstmnt.executeQuery();
+        rs.next();
+        int  count = rs.getInt( 1 );
         pstmnt.close();
 
+        if  (count > 0 ) {
+
+            return   true ;
+        }
+
+        return   false ;
     }
 
 }
