@@ -99,27 +99,27 @@ public class HotelDataAccess {
         pstmnt.close();
         return list;
     }
-//    public static List<RoomDate> getAllRoomDate() throws SQLException {
-//
-//        String sql = "SELECT * FROM " + roomdatabase + " ORDER BY userID" ;
-//        PreparedStatement pstmnt = conn.prepareStatement(sql);
-//        ResultSet rs = pstmnt.executeQuery();
-//        List<RoomDate> list = new ArrayList<>();
-//
-//        while  (rs.next()) {
-//            int i = rs.getInt("dateID" );
-//            LocalDate startDate = rs.getDate("startDate").toLocalDate();
-//            LocalDate endDate = rs.getDate("endDate").toLocalDate();
-//            int fk_roomID = rs.getInt("fk_roomID");
-//
-//
-//
-//            list.add(new RoomDate(i, startDate, endDate, fk_roomID));
-//        }
-//        System.out.println("I work also");
-//        pstmnt.close();
-//        return list;
-//    }
+    public static List<RoomDate> getAllRoomDate() throws SQLException {
+
+        String sql = "SELECT * FROM " + datedatabase + " ORDER BY dateID" ;
+        PreparedStatement pstmnt = conn.prepareStatement(sql);
+        ResultSet rs = pstmnt.executeQuery();
+        List<RoomDate> list = new ArrayList<>();
+
+        while  (rs.next()) {
+            int i = rs.getInt("dateID" );
+            LocalDate startDate = rs.getDate("startDate").toLocalDate();
+            LocalDate endDate = rs.getDate("endDate").toLocalDate();
+            int fk_roomID = rs.getInt("fk_roomID");
+
+
+
+            list.add(new RoomDate(i, startDate, endDate, fk_roomID));
+        }
+        System.out.println("I work also");
+        pstmnt.close();
+        return list;
+    }
 
 
     public List<Room> getAllRoom(int hotelID) throws SQLException {
@@ -305,36 +305,7 @@ public class HotelDataAccess {
         return  id;
     }
 
-    public static int  updateDate(RoomDate roomdate) throws SQLException{
-        String dml = "UPDATE  "  + datedatabase + " SET startDate = ?, endDate = ? WHERE fk_roomID = ?" ;
-        PreparedStatement pstmnt = conn.prepareStatement(dml,
-                PreparedStatement.RETURN_GENERATED_KEYS);
-        LocalDateTime dt =  LocalDateTime.of(roomdate.getStartDate().getYear(),
-                roomdate.getStartDate().getMonthValue(),
-                roomdate.getStartDate().getDayOfMonth(),
-                0,0,0,0);
-        java.sql.Date date = new java.sql.Date(
-                dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        pstmnt.setDate(1, (date));
-        LocalDateTime dt1 = LocalDateTime.of(roomdate.getEndDate().getYear(),
-                roomdate.getEndDate().getMonthValue(),
-                roomdate.getEndDate().getDayOfMonth(),
-                0,0,0,0);
-        java.sql.Date date1 = new java.sql.Date(
-                dt1.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        pstmnt.setDate(2, (date1));
-        pstmnt.setInt(3, roomdate.getFk_roomID());
 
-        pstmnt.executeUpdate(); // returns insert count
-
-        // get identity column value
-        ResultSet rs = pstmnt.getGeneratedKeys();
-        rs.next();
-        int  id = rs.getInt( 1 );
-
-        pstmnt.close();
-        return  id;
-    }
 
     public static int insertBooking(Booking booking) throws SQLException{
         String dml = "INSERT INTO "  + bookingdatabase + " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?)" ;
@@ -359,16 +330,17 @@ public class HotelDataAccess {
     }
 
     // Update Meth following here
-    public void  updateUser (User user) throws  SQLException {
+    public static void  updateUser (User user) throws  SQLException {
 
         String dml = "UPDATE "  + userdatabase +
-                " SET f = ?"  + " WHERE id = ?" ;
+                " SET firstName = ?, lastName = ?, phone = ?, email = ?, payment = ? "  + " WHERE userId = " + user.getUserID() ;
         PreparedStatement pstmnt = conn.prepareStatement(dml);
         pstmnt.setString( 1 , user.getFirstName());
         pstmnt.setString( 2 , user.getLastName());
         pstmnt.setString(3, user.getPhone());
         pstmnt.setString(4, user.getEmail());
         pstmnt.setString(5, user.getPayment());
+
         pstmnt.executeUpdate(); // returns update count
         pstmnt.close();
     }
@@ -376,12 +348,35 @@ public class HotelDataAccess {
     public static void  updateBooking (Booking booking) throws  SQLException {
 
         String dml = "UPDATE "  + bookingdatabase +
-                " SET humanCage = ? , breakfast = ?, wellness =?, priceSum = ? WHERE bookingID = "+booking.getBookingID() ;
+                " SET humanCage = ? , breakfast = ?, wellness =?, priceSum = ? " + "WHERE bookingID = "+ booking.getBookingID();
         PreparedStatement pstmnt = conn.prepareStatement(dml);
         pstmnt.setBoolean(1,booking.isHumanCage());
         pstmnt.setBoolean(2, booking.isBreakfast());
         pstmnt.setBoolean(3, booking.isWellness());
         pstmnt.setDouble(4, booking.getPriceSum());
+        pstmnt.executeUpdate(); // returns update count
+        pstmnt.close();
+    }
+    public static void  updateDate(RoomDate roomdate) throws SQLException{
+        String dml = "UPDATE  "  + datedatabase + " SET startDate = ?, endDate = ?, fk_roomID  = ? " + " WHERE dateID = " +  roomdate.getDateID();
+        PreparedStatement pstmnt = conn.prepareStatement(dml);
+
+        LocalDateTime dt =  LocalDateTime.of(roomdate.getStartDate().getYear(),
+                roomdate.getStartDate().getMonthValue(),
+                roomdate.getStartDate().getDayOfMonth(),
+                0,0,0,0);
+        java.sql.Date date = new java.sql.Date(
+                dt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        pstmnt.setDate(1, (date));
+        LocalDateTime dt1 = LocalDateTime.of(roomdate.getEndDate().getYear(),
+                roomdate.getEndDate().getMonthValue(),
+                roomdate.getEndDate().getDayOfMonth(),
+                0,0,0,0);
+        java.sql.Date date1 = new java.sql.Date(
+                dt1.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        pstmnt.setDate(2, (date1));
+        pstmnt.setInt(3, roomdate.getFk_roomID());
+
         pstmnt.executeUpdate(); // returns update count
         pstmnt.close();
     }
@@ -391,9 +386,20 @@ public class HotelDataAccess {
     public static void  deleteBooking(int bookingID)
             throws  SQLException {
 
+
         String dml = "DELETE FROM "  + bookingdatabase + " WHERE bookingID = ?" ;
         PreparedStatement pstmnt = conn.prepareStatement(dml);
         pstmnt.setInt( 1 , bookingID);
+        pstmnt.executeUpdate(); // returns delete count (0 for none)
+
+        pstmnt.close();
+    }
+    public static void  deleteDate(int dateID)
+            throws  SQLException {
+
+        String dml = "DELETE FROM "  + datedatabase + " WHERE dateID = ?" ;
+        PreparedStatement pstmnt = conn.prepareStatement(dml);
+        pstmnt.setInt( 1 , dateID);
         pstmnt.executeUpdate(); // returns delete count (0 for none)
 
         pstmnt.close();

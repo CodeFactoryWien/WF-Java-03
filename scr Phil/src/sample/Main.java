@@ -21,11 +21,9 @@
 
                 import java.sql.*;
                 import java.time.ZoneId;
-                import java.util.ArrayList;
-                import java.util.Calendar;
-                import java.util.Date;
-                import java.util.List;
+                import java.util.*;
                 import java.time.*;
+                import java.util.Date;
 
         public class Main extends Application {
 
@@ -40,6 +38,9 @@
             private Label hotelAdress;
             private Label hotelPhone;
             private Label hotelEmail;
+            Booking updateBook= null;
+            User user = null;
+            RoomDate rd = null;
 
             //Room
             private TableView<RoomCategory> roomTable = new TableView();
@@ -92,7 +93,9 @@
                 hotellistView.setItems(datahotel);
 
                 bookingDateTable = new TableView<>();
-
+//                bookingDateTable.getSelectionModel().selectedItemProperty().addListener((ChangeListener<BookingDate>) (arg0, arg1, arg2) -> {
+//
+//                });
                 // HOTELLAYOUT
                 Label hotellbl = new Label("Hotel");
                 hotellbl.setMaxWidth(Double.MAX_VALUE);
@@ -237,8 +240,18 @@
                 //BUTTONS
                 Button bookingbtn = new Button("New Booking");
                 Button deletebookingbtn = new Button("Delete");
+                deletebookingbtn.setDisable(true);
+                Button getbookingbtn = new Button("Get Booking Data");
+                getbookingbtn.setDisable(true);
                 Button updatebookingbtn = new Button("Update");
+                updatebookingbtn.setDisable(true);
                 Button showallbookingbtn = new Button("Show all Bookings");
+                Button exit = new Button ("Close the Application");
+                exit.setOnAction(e-> System.exit(0));
+//                exit.setPrefSize(200, 20);
+//                exit.setFont(new Font("Arial", 12));
+
+
 
 
                 //RADIOBUTTONS
@@ -270,59 +283,125 @@
                 //DELETE BOOKING BUTTON MeTHOD
                 deletebookingbtn.setOnAction(e-> {
                     try {
-                        HotelDataAccess.deleteBooking(bookingDateTable.getSelectionModel().getSelectedItem().getBookingID());
-                        dataBookingDate.clear();
-                        dataBookingDate =getDbBookingDate(roomTable.getSelectionModel().getSelectedItem().getRoomID());
-                        bookingDateTable.setItems(dataBookingDate);
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "DELETE?");
+                        alert.titleProperty().set("DELETE?");
+                        alert.headerTextProperty().set("Do you really want to delete this booking?");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if(result.get() == ButtonType.OK) {
+                            HotelDataAccess.deleteBooking(bookingDateTable.getSelectionModel().getSelectedItem().getBookingID());
+                            HotelDataAccess.deleteDate(bookingDateTable.getSelectionModel().getSelectedItem().getDateID());
+                            dataBookingDate.clear();
+                            dataBookingDate = getDbBookingDate(roomTable.getSelectionModel().getSelectedItem().getRoomID());
+                            bookingDateTable.setItems(dataBookingDate);
+                        }
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                 });
 
-                //UPDATE BOOKING BUTTON METHOD
-                updatebookingbtn.setOnAction(e-> {
-                        Booking updateBook= null;
-                        User user = null;
-                        RoomDate rd = null;
+                getbookingbtn.setOnAction(e-> {
+
+
                         dataBook = getAllExistingBookings();
                         dataUser = getDBUSer();
-//                        dataDate = getDbRoomDate();
-                        for(Booking b :dataBook ){
-                            if(bookingDateTable.getSelectionModel().getSelectedItem().getBookingID() == b.getBookingID()) {
+                        dataDate = getDbRoomDate();
+                        for (Booking b : dataBook) {
+                            if (bookingDateTable.getSelectionModel().getSelectedItem().getBookingID() == b.getBookingID()) {
                                 updateBook = b;
-                                System.out.println(updateBook);
-                                for (User u : dataUser) {
-                                    if (updateBook.getFk_userID() == u.getUserID()){
-                                        user = u;
-                                        System.out.println(u);                                    }
-                                }
-//                                for(RoomDate r: dataDate){
-//                                    System.out.println("11");
-//                                    if(updateBook.getFk_dateID() == r.getDateID()){
-//                                        rd = r;
-//                                        System.out.println(rd);
-//                                    }
-//                                }
+                                cagebtn.setSelected(updateBook.isHumanCage());
+                                breakfastbtn.setSelected(updateBook.isBreakfast());
+                                wellnessbtn.setSelected(updateBook.isWellness());
+                            }
+
+                        }
+                        for (User u : dataUser) {
+                            if (updateBook.getFk_userID() == u.getUserID()) {
+                                firstNameTxt.setText(u.getFirstName());
+                                lastNameTxt.setText(u.getLastName());
+                                phoneTxt.setText(u.getPhone());
+                                emailTxt.setText(u.getEmail());
+                                paymentTxt.setText(u.getPayment());
                             }
                         }
+                        for (RoomDate r : dataDate) {
+                            if (updateBook.getFk_dateID() == r.getDateID()) {
+                                startDateTxt.setValue(r.getStartDate());
+                                endDateTxt.setValue(r.getEndDate());
+                            }
+
+                        }
+                        deletebookingbtn.setDisable(false);
+                        updatebookingbtn.setDisable(false);
 
                 });
-//Show all Bookings from every hotel
+
+                //UPDATE BOOKING BUTTON METHOD
+                updatebookingbtn.setOnAction(e-> {
+                    dataBook = getAllExistingBookings();
+                    dataUser = getDBUSer();
+                    dataDate = getDbRoomDate();
+                    int i = 0;
+                          for(Booking b :dataBook ) {
+                              if (bookingDateTable.getSelectionModel().getSelectedItem().getBookingID() == b.getBookingID())
+                                  updateBook = b;
+                          }
+                           for (User u : dataUser) {
+                               if (updateBook.getFk_userID() == u.getUserID()) {
+                                   u.setFirstName(firstNameTxt.getText());
+                                   u.setLastName((lastNameTxt.getText()));
+                                   u.setPhone((phoneTxt.getText()));
+                                   u.setEmail((emailTxt.getText()));
+                                   u.setPayment(paymentTxt.getText());
+                                   try {
+                                       HotelDataAccess.updateUser(u);
+                                   } catch (SQLException ex) {
+                                       ex.printStackTrace();
+                                   }
+                               }
+                                }
+                           for(RoomDate r: dataDate) {
+                               if (updateBook.getFk_dateID() == r.getDateID()) {
+                                   r.setStartDate(startDateTxt.getValue());
+                                   r.setEndDate(endDateTxt.getValue());
+                                   r.setFk_roomID(r.getFk_roomID());
+                                   i = r.getFk_roomID();
+                                   try {
+                                       HotelDataAccess.updateDate(r);
+                                   } catch (SQLException ex) {
+                                       ex.printStackTrace();
+                                   }
+                               }
+                           }
+                    dataBookingDate.clear();
+                    dataBookingDate = getDbBookingDate(i);
+
+                    bookingDateTable.setItems(dataBookingDate);
+
+
+
+                });
+                //Show all Bookings from every hotel
                 showallbookingbtn.setOnAction(e->{
                     dataBookingDate = getDbBooking();
                     bookingDateTable.setItems(dataBookingDate);
                 });
 
-                VBox insertbox = new VBox(firstNamelbl,firstNameTxt,lastNamelbl,lastNameTxt,phonelbl,phoneTxt,paymentlbl,paymentTxt,emiallbl,emailTxt,newDategrid,cagebtn,breakfastbtn,wellnessbtn,bookingbtn,deletebookingbtn,updatebookingbtn, showallbookingbtn);
-                HBox hbHotel = new HBox(25, hotellistView, grid1,insertbox);
+                VBox insertbox = new VBox(firstNamelbl,firstNameTxt,lastNamelbl,lastNameTxt,phonelbl,phoneTxt,paymentlbl,paymentTxt,emiallbl,emailTxt,newDategrid,cagebtn,breakfastbtn,wellnessbtn,bookingbtn,deletebookingbtn, getbookingbtn, updatebookingbtn, showallbookingbtn);
+                HBox hbHotel = new HBox(25, hotellistView, grid1,insertbox, exit);
 
                 VBox vb1 = new VBox(25, hbHotel, roomTable, bookingDateTable);
                 //   Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
                 primaryStage.setTitle("TriWauWau");
-                primaryStage.setScene(new Scene(vb1, 950, 600));
+                primaryStage.setScene(new Scene(vb1, 950, 800));
                 primaryStage.show();
 
                 hotellistView.getSelectionModel().selectFirst();
+                bookingDateTable.getSelectionModel().selectedItemProperty().addListener((ChangeListener<BookingDate>) (arg0, arg1, arg2) -> {
+                    getbookingbtn.setDisable(false);
+                    deletebookingbtn.setDisable(true);
+                    updatebookingbtn.setDisable(true);
+
+                });
 
             }
 
@@ -406,21 +485,6 @@
     }
 
 
-    private   class  ListSelectChangeListener2 implements ChangeListener<Number> {
-
-        @Override
-        public   void  changed(ObservableValue<? extends Number> ov,
-                               Number old_val, Number new_val) {
-
-            if ((new_val.intValue() < 0) || (new_val.intValue() >= dataBookingDate.size())) {
-
-                return;
-            }
-
-
-
-        }
-    }
 
 
     private ObservableList<Hotel> getDbData() {
@@ -553,21 +617,21 @@
                 ObservableList<User> dataUser = FXCollections.observableList(list);
                 return  dataUser;
             }
-//            private ObservableList<RoomDate> getDbRoomDate() {
-//
-//                List<RoomDate> list = null ;
-//
-//                try  {
-//                    list = dbaccess.getAllRoomDate();
-//                }
-//                catch  (Exception e) {
-//
-//                    displayException(e);
-//                }
-//
-//                ObservableList<RoomDate> dataDate = FXCollections.observableList(list);
-//                return  dataDate;
-//            }
+            private ObservableList<RoomDate> getDbRoomDate() {
+
+                List<RoomDate> list = null ;
+
+                try  {
+                    list = dbaccess.getAllRoomDate();
+                }
+                catch  (Exception e) {
+
+                    displayException(e);
+                }
+
+                ObservableList<RoomDate> dataDate = FXCollections.observableList(list);
+                return  dataDate;
+            }
 
 
     private   void  displayException(Exception e) {
